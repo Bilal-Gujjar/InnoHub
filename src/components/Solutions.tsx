@@ -33,14 +33,14 @@ export function Solutions() {
           {solutions.map((solution, index) => (
             <div 
               key={index}
-              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition group"
+              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition group hover:bg-blue-800 hover:shadow-blue-8900"
             >
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-600 transition">
                 <solution.icon className="w-6 h-6 text-blue-600 group-hover:text-white transition" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">{solution.title}</h3>
-              <p className="text-gray-600 mb-4">{solution.description}</p>
-              <button className="text-blue-600 font-medium hover:text-blue-700 transition">
+              <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition">{solution.title}</h3>
+              <p className="text-gray-600 mb-4 group-hover:text-gray-300 transition">{solution.description}</p>
+              <button className="text-blue-600 font-medium hover:text-blue-700 transition group-hover:text-white">
                 Learn More →
               </button>
             </div>
