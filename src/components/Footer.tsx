@@ -46,13 +46,13 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Follow Us</h3>
             <div className="flex space-x-4">
-              <a href="#" className="hover:text-blue-500 transition">
+              <a href="https://www.linkedin.com/" className="hover:text-blue-500 transition">
                 <Linkedin className="w-6 h-6" />
               </a>
-              <a href="#" className="hover:text-blue-500 transition">
+              <a href="https://x.com/" className="hover:text-blue-500 transition">
                 <Twitter className="w-6 h-6" />
               </a>
-              <a href="#" className="hover:text-blue-500 transition">
+              <a href="https://www.facebook.com/" className="hover:text-blue-500 transition">
                 <Facebook className="w-6 h-6" />
               </a>
             </div>
