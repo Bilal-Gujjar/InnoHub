@@ -1,10 +1,10 @@
-import { useState } from 'react';
+// src/components/Insights.tsx
+
 import { useInsights } from '../hooks/useInsights';
 import { Loader2 } from 'lucide-react';
 
 export function Insights() {
   const { insights, loading, error } = useInsights();
-  const [imageLoading, setImageLoading] = useState(true);
 
   if (error) {
     return (
@@ -33,19 +33,21 @@ export function Insights() {
                 key={article.url} // Using URL as a unique key
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col"
               >
-                {article.urlToImage && (
+                {article.image ? (
                   <div className="relative w-full h-48">
-                    {imageLoading && (
-                      <div className="absolute inset-0 flex justify-center items-center bg-gray-200">
-                        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-                      </div>
-                    )}
                     <img
-                      src={article.urlToImage}
+                      src={article.image}
                       alt={article.title}
-                      className={`w-full h-48 object-cover ${imageLoading ? 'hidden' : 'block'}`}
-                      onLoad={() => setImageLoading(false)}
+                      className="w-full h-48 object-cover"
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                        img.src = '/fallback-image.jpg'; // Ensure this image exists
+                      }}
                     />
+                  </div>
+                ) : (
+                  <div className="relative w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">No Image Available</span>
                   </div>
                 )}
                 <div className="p-6 flex flex-col flex-grow">
@@ -62,7 +64,7 @@ export function Insights() {
                     </a>
                   </div>
                   <div className="mt-2 text-sm text-gray-500">
-                    {new Date(article.publishedAt).toLocaleDateString()}
+                    {new Date(article.published_at).toLocaleDateString()}
                   </div>
                 </div>
               </article>

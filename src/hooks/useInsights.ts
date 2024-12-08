@@ -1,46 +1,56 @@
+// src/hooks/useInsights.ts
+
 import { useState, useEffect } from 'react';
 
-interface Source {
-  id: string | null;
-  name: string;
+interface Pagination {
+  limit: number;
+  offset: number;
+  count: number;
+  total: number;
 }
 
 interface Article {
-  source: Source;
   author: string | null;
   title: string;
   description: string;
   url: string;
-  urlToImage: string | null;
-  publishedAt: string;
-  content: string | null;
+  image: string | null;
+  category: string;
+  language: string;
+  country: string;
+  published_at: string;
 }
 
 interface NewsApiResponse {
-  status: string;
-  totalResults: number;
-  articles: Article[];
+  pagination: Pagination;
+  data: Article[];
+}
+
+interface ApiErrorResponse {
+  error: {
+    code: string;
+    message: string;
+    context?: Record<string, any>;
+  };
 }
 
 interface UseInsightsReturn {
   insights: Article[];
   loading: boolean;
   error: Error | null;
-  imageLoading: boolean;
 }
 
 export function useInsights(): UseInsightsReturn {
   const [insights, setInsights] = useState<Article[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const [imageLoading, setImageLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchInsights = async () => {
       const API_URL = import.meta.env.VITE_NEWS_API_URL;
       const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
       const SOURCE = import.meta.env.VITE_NEWS_API_SOURCE || 'techcrunch';
-      const PAGE_SIZE = import.meta.env.VITE_NEWS_API_PAGE_SIZE || '3';
+      const PAGE_SIZE = import.meta.env.VITE_NEWS_API_PAGE_SIZE || '6';
 
       if (!API_URL || !API_KEY) {
         setError(new Error('API URL or API Key is missing in environment variables'));
@@ -48,22 +58,29 @@ export function useInsights(): UseInsightsReturn {
         return;
       }
 
-      const requestUrl = `${API_URL}?sources=${SOURCE}&pageSize=${PAGE_SIZE}&apiKey=${API_KEY}`;
+      const requestUrl = `${API_URL}?access_key=${API_KEY}&sources=${SOURCE}&limit=${PAGE_SIZE}`;
 
       try {
         const response = await fetch(requestUrl);
+        const data = await response.json();
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch insights: ${response.status} ${response.statusText}`);
+          // Handle HTTP errors
+          if (data.error) {
+            throw new Error(`API Error: ${data.error.message} (${data.error.code})`);
+          } else {
+            throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+          }
         }
 
-        const data: NewsApiResponse = await response.json();
-
-        if (data.status !== 'ok') {
-          throw new Error(`API error: ${data.status}`);
+        // Handle API-specific errors
+        if ('error' in data) {
+          throw new Error(`API Error: ${data.error.message} (${data.error.code})`);
         }
 
-        setInsights(data.articles);
-        setImageLoading(false);
+        const apiResponse: NewsApiResponse = data;
+
+        setInsights(apiResponse.data);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An unknown error occurred'));
       } finally {
@@ -74,5 +91,5 @@ export function useInsights(): UseInsightsReturn {
     fetchInsights();
   }, []);
 
-  return { insights, loading, error, imageLoading };
+  return { insights, loading, error };
 }
