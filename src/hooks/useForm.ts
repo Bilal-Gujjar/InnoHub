@@ -43,7 +43,6 @@ export function useForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
